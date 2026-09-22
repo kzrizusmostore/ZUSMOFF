@@ -12,15 +12,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Install Blender
+      - name: Install Blender dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender
+          sudo apt-get install -y blender python3-numpy
           blender --version
+          blender --background --python-expr "import sys; sys.path.insert(0, '/usr/lib/python3/dist-packages'); import numpy; print('NumPy OK:', numpy.__version__)"
 
       - name: Build ZUSMO FF runtime assets
         run: blender --background --python tools/prepare_assets.py
@@ -35,6 +36,40 @@ jobs:
             exit 1
           fi
 
+          if [ ! -f assets/character/character_rigged.glb ] && [ ! -f assets/character/character_rigged.glb.parts.json ]; then
+            echo "ERROR: character runtime asset was not generated"
+            exit 1
+          fi
+
+          bad="$(find assets/map assets/character -type f -size +24M \
+            ! -name 'source.blend.part*' -print)"
+          if [ -n "$bad" ]; then
+            echo "ERROR: generated runtime files above 24 MB:"
+            echo "$bad"
+            exit 1
+          fi
+
+          echo "Runtime assets ready:"
+          find assets/map -maxdepth 1 -type f -name 'map.glb*' -printf '%p %s bytes\n' | sort
+          find assets/character -maxdepth 1 -type f -name 'character_rigged.glb*' -printf '%p %s bytes\n' | sort
+
+      - name: Commit generated assets back to repository
+        shell: bash
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f assets/map/map.glb* assets/character/character_rigged.glb*
+
+          if git diff --cached --quiet; then
+            echo "Runtime assets are already up to date."
+            exit 0
+          fi
+
+          git commit -m "Build runtime assets for Vercel"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
           if [ ! -f assets/character/character_rigged.glb ] && [ ! -f assets/character/character_rigged.glb.parts.json ]; then
             echo "ERROR: character runtime asset was not generated"
             exit 1

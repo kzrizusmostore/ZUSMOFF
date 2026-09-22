@@ -1,0 +1,14 @@
+GITHUB UPLOAD
+=============
+
+Versi ini dibuat khusus agar TIDAK ADA file project di atas 20,000,000 bytes.
+Batas target sengaja dibuat 20 MB agar aman di bawah batas upload web GitHub 25 MB.
+
+PENTING:
+- Jangan upload file ZIP project sebagai satu file ke GitHub.
+- Extract ZIP terlebih dahulu.
+- Upload ISI folder ZUSMO_FF_GITHUB ke repository.
+- assets/map/source.blend sudah diganti menjadi source.blend.part000 s/d part009.
+- Jangan gabungkan part menjadi source.blend di dalam repository.
+- tools/prepare_assets.py otomatis menyatukan source part secara sementara saat build.
+- Jika map.glb hasil Blender >20 MB, prepare_assets.py juga otomatis memecah hasil GLB dan js/main.js langsung bisa memuat part tersebut di browser.

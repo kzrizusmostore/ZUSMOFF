@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "original": "map.glb",
+  "totalBytes": 94897680,
+  "partSizeLimit": 20000000,
+  "parts": [
+    "map.glb.part000",
+    "map.glb.part001",
+    "map.glb.part002",
+    "map.glb.part003",
+    "map.glb.part004"
+  ]
+}

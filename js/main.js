@@ -58,8 +58,10 @@ function parseGLB(buffer, base) {
 
 function loadDirectGLB(url, startPct, endPct, label) {
   return new Promise((resolve, reject) => {
+    // A cache-busting query avoids Android/Chromium reusing a stale GLB after a rebuild.
+    const freshUrl = `${url}?v=${Date.now()}`;
     gltf.load(
-      url,
+      freshUrl,
       resolve,
       (e) => {
         if (e.total) setProgress(startPct + (e.loaded / e.total) * (endPct - startPct), `Loading ${label}`);
@@ -75,7 +77,7 @@ async function loadPackedGLB(url, label, startPct, endPct) {
   const manifestUrl = `${url}.parts.json`;
   let manifestResponse;
   try {
-    manifestResponse = await fetch(manifestUrl, { cache: 'no-store' });
+    manifestResponse = await fetch(`${manifestUrl}?t=${Date.now()}`, { cache: 'no-store' });
   } catch (e) {
     throw new Error(`Tidak bisa mengakses ${manifestUrl}: ${e.message}`);
   }
@@ -92,12 +94,15 @@ async function loadPackedGLB(url, label, startPct, endPct) {
   const base = url.slice(0, url.lastIndexOf('/') + 1);
   const buffers = [];
   let total = 0;
+  // v2 manifests contain the SHA-256-derived cacheKey of the actual GLB.
+  // If an old manifest is encountered we still force revalidation with Date.now().
+  const cacheKey = manifest.cacheKey || `${manifest.totalBytes || 0}-${Date.now()}`;
 
   for (let i = 0; i < manifest.parts.length; i++) {
     const pct = startPct + ((i + 0.15) / manifest.parts.length) * (endPct - startPct);
     setProgress(pct, `Loading ${label} ${i + 1}/${manifest.parts.length}`);
-    const partUrl = base + manifest.parts[i];
-    const response = await fetch(partUrl, { cache: 'force-cache' });
+    const partUrl = `${base}${manifest.parts[i]}?v=${encodeURIComponent(cacheKey)}`;
+    const response = await fetch(partUrl, { cache: 'no-store' });
     if (!response.ok) throw new Error(`${label}: ${manifest.parts[i]} HTTP ${response.status}`);
     const buffer = await response.arrayBuffer();
     buffers.push(buffer);

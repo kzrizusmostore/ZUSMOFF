@@ -1,1 +1,90 @@
+# Blender MTL File: 'Free Fire T Shirt 3D Character Model.blend'
+# Material Count: 7
 
+newmtl Default_OBJ.001
+Ns 575.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -bm 0.500000 /home/gamer/Desktop/Ruok FF Character Texture/Texture/male_head_cos_Djmale_n.png
+map_Kd /home/gamer/Desktop/Ruok FF Character Texture/Texture/Male_Lobby_Head_Cos_Djmale_D.png
+map_Ks /home/gamer/Desktop/Ruok FF Character Texture/Texture/male_head_cos_Djmale_s.png
+
+newmtl Default_OBJ.003
+Ns 81.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump /home/gamer/Desktop/3D Character Tutorial/textures/male_tshirt_001_N.png
+map_Kd /home/gamer/Desktop/3D Character Tutorial/textures/female_cos_tshirt_djmancolor_D.png
+map_Ks /home/gamer/Desktop/3D Character Tutorial/textures/male_tshirt_001_s.png
+
+newmtl Default_OBJ.040
+Ns 81.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -bm 2.000000 /home/gamer/Desktop/3D Character Tutorial/textures/Male_Shoe_Cos_Fashiontrends_N.png
+map_Kd /home/gamer/Desktop/3D Character Tutorial/textures/Male_Shoe_Cos_Fashiontrends_D-CAB-d.png
+map_Ks /home/gamer/Desktop/3D Character Tutorial/textures/Male_Shoe_Cos_Fashiontrends_S.png
+
+newmtl Default_OBJ.072
+Ns 81.000006
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/gamer/Desktop/3D Character Tutorial/textures/male_hair_cos_ffunit_d.png
+map_Ks /home/gamer/Desktop/3D Character Tutorial/textures/male_hair_cos_ffunit_s.png
+
+newmtl Default_OBJ.118
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump /home/gamer/Desktop/3D Character Tutorial/textures/Male_Bottom_Cos_Pekingopera_Grey_N.png
+map_Kd /home/gamer/Desktop/3D Character Tutorial/textures/Male_Bottom_Cos_Pekingopera_Grey_D.png
+map_Ks /home/gamer/Desktop/3D Character Tutorial/textures/Male_Bottom_Cos_Pekingopera_Grey_S.png
+
+newmtl Default_OBJ.149
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -bm 0.500000 /home/gamer/Desktop/Ruok FF Character Texture/Texture/male_head_cos_Djmale_n.png
+map_Kd /home/gamer/Desktop/Ruok FF Character Texture/Texture/Male_Lobby_Head_Cos_Djmale_D.png
+map_Ks /home/gamer/Desktop/Ruok FF Character Texture/Texture/male_head_cos_Djmale_s.png
+
+newmtl Material.001
+Ns 9.000004
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.200000 0.200000 0.200000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd /home/gamer/Desktop/Ruok FF Character Texture/Texture/Male_Body_Cos_BRninja_D.png

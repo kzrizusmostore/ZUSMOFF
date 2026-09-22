@@ -1,2 +1,31 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>ZUSMO FF</title><link rel="stylesheet" href="css/style.css"></head><body>
-<div id="loading"><b>ZUSMO FF</b><span id="progress">Loading 0%</span></div><div id="error"></div><div id="hud"><button id="fs">⛶</button><div id="joy"><i></i></div><button id="jump">JUMP</button></div><script type="module" src="js/main.js"></script></body></html>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#050607">
+  <title>ZUSMO FF</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="loading">
+    <b>ZUSMO FF</b>
+    <span id="progress">Starting engine 1%</span>
+  </div>
+  <div id="error"></div>
+  <div id="hud">
+    <button id="fs" aria-label="Fullscreen">⛶</button>
+    <div id="joy" aria-label="Movement joystick"><i></i></div>
+    <button id="jump">JUMP</button>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

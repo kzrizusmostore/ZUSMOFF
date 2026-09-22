@@ -1,0 +1,67 @@
+name: Build and Deploy ZUSMO FF
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+
+      - name: Build map and rigged character
+        run: blender --background --python tools/prepare_assets.py
+
+      - name: Verify runtime assets
+        run: |
+          test -f assets/map/map.glb -o -f assets/map/map.glb.parts.json
+          test -f assets/character/character_rigged.glb -o -f assets/character/character_rigged.glb.parts.json
+          bad="$(find . -type f -size +24M -not -path './.git/*' -print)"
+          if [ -n "$bad" ]; then
+            echo "Files above 24 MB found:"
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Remove Blender source chunks from published site
+        run: |
+          rm -f assets/map/source.blend.part[0-9][0-9][0-9]
+          rm -f assets/map/source.blend.parts.json
+          rm -f assets/map/_source.rebuilt.blend
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

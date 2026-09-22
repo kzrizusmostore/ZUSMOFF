@@ -5,18 +5,16 @@ from pathlib import Path
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 MAP_DIR = os.path.join(ROOT, 'assets', 'map')
 CHAR_DIR = os.path.join(ROOT, 'assets', 'character')
-MAX_PART_BYTES = 20_000_000  # safely below GitHub web upload's 25 MB limit
+MAX_PART_BYTES = 20_000_000
 
 
 def rebuild_source_blend():
     direct = os.path.join(MAP_DIR, 'source.blend')
     if os.path.exists(direct):
         return direct, False
-
     parts = sorted(glob.glob(os.path.join(MAP_DIR, 'source.blend.part[0-9][0-9][0-9]')))
     if not parts:
         raise FileNotFoundError('Missing source.blend and source.blend.partNNN files')
-
     rebuilt = os.path.join(MAP_DIR, '_source.rebuilt.blend')
     print('Rebuilding source.blend temporarily from', len(parts), 'parts...')
     with open(rebuilt, 'wb') as out:
@@ -46,13 +44,11 @@ def remove_split_artifacts(path):
 
 
 def split_web_asset(path):
-    """Keep small GLBs as-is; split larger ones into <=20 MB chunks + manifest."""
     remove_split_artifacts(path)
     size = os.path.getsize(path)
     if size <= MAX_PART_BYTES:
         print(os.path.basename(path), 'is', size, 'bytes; no split needed.')
         return
-
     part_names = []
     with open(path, 'rb') as src:
         index = 0
@@ -67,7 +63,6 @@ def split_web_asset(path):
             part_names.append(name)
             print('Created', name, len(data), 'bytes')
             index += 1
-
     manifest = {
         'version': 1,
         'original': os.path.basename(path),
@@ -77,12 +72,11 @@ def split_web_asset(path):
     }
     with open(path + '.parts.json', 'w', encoding='utf-8') as f:
         json.dump(manifest, f, indent=2)
-
     os.remove(path)
     print('Removed oversized', os.path.basename(path), '; runtime will load split parts.')
 
 
-# MAP: rebuild original .blend temporarily, export the original map to GLB, then split if needed.
+# MAP
 blend_path, temporary_blend = rebuild_source_blend()
 bpy.ops.wm.open_mainfile(filepath=blend_path)
 map_glb = os.path.join(MAP_DIR, 'map.glb')
@@ -112,7 +106,6 @@ bpy.context.view_layer.objects.active = meshes[0]
 bpy.ops.object.join()
 mesh = bpy.context.object
 
-# Normalize upright model and generate humanoid armature from bbox proportions.
 mesh.rotation_euler = (math.radians(90), 0, 0)
 bpy.context.view_layer.objects.active = mesh
 bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
@@ -121,7 +114,6 @@ scale = 1.78 / max(dims)
 mesh.scale = (scale,) * 3
 bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
-# Center model and place feet near ground.
 from mathutils import Vector
 bb = [mesh.matrix_world @ Vector(c) for c in mesh.bound_box]
 minz = min(v.z for v in bb)
@@ -130,7 +122,6 @@ cy = sum(v.y for v in bb) / 8
 mesh.location = (-cx, -cy, -minz)
 bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
 
-# Armature in Blender Z-up. Automatic weights.
 bpy.ops.object.armature_add(enter_editmode=True, location=(0, 0, 0))
 arm = bpy.context.object
 arm.name = 'ZUSMO_RIG'
@@ -161,13 +152,51 @@ for s in (-1, 1):
     bone(side + 'Foot', (s * .10, 0, .10), (s * .10, -.18, .04), ll)
 
 bpy.ops.object.mode_set(mode='OBJECT')
+
+# Deterministic skinning: avoid Bone Heat failure and Blender 4.0 glTF exporter crash.
+for vg in list(mesh.vertex_groups):
+    mesh.vertex_groups.remove(vg)
+
+mesh.parent = arm
+arm_mod = mesh.modifiers.new(name='ZUSMO_Armature', type='ARMATURE')
+arm_mod.object = arm
+arm_mod.use_vertex_groups = True
+
+groups = {}
+segments = []
+for b in arm.data.bones:
+    b.use_deform = True
+    groups[b.name] = mesh.vertex_groups.new(name=b.name)
+    segments.append((b.name, b.head_local.copy(), b.tail_local.copy()))
+
+
+def point_segment_distance(p, a, b):
+    ab = b - a
+    denom = ab.length_squared
+    if denom <= 1e-12:
+        return (p - a).length
+    t = max(0.0, min(1.0, (p - a).dot(ab) / denom))
+    q = a + ab * t
+    return (p - q).length
+
+
+counts = {name: 0 for name in groups}
+for v in mesh.data.vertices:
+    p = v.co
+    nearest_name = min(segments, key=lambda s: point_segment_distance(p, s[1], s[2]))[0]
+    groups[nearest_name].add([v.index], 1.0, 'REPLACE')
+    counts[nearest_name] += 1
+
+if mesh.data.vertices:
+    fallback_index = mesh.data.vertices[0].index
+    for name, count in counts.items():
+        if count == 0:
+            groups[name].add([fallback_index], 0.0001, 'ADD')
+
 mesh.select_set(True)
 arm.select_set(True)
 bpy.context.view_layer.objects.active = arm
-try:
-    bpy.ops.object.parent_set(type='ARMATURE_AUTO')
-except Exception:
-    bpy.ops.object.parent_set(type='ARMATURE_NAME')
+print('Character skin weights created deterministically.')
 
 # Procedural animation clips.
 def clip(name, frames, run=False, jump=False):
@@ -205,7 +234,6 @@ for n, fr, r, j in [
 ]:
     clip(n, fr, r, j)
 
-# Push every action as NLA strip so glTF exports all clips.
 arm.animation_data.action = None
 for act in bpy.data.actions:
     tr = arm.animation_data.nla_tracks.new()

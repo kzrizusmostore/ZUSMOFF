@@ -1,0 +1,10 @@
+Replace ONLY these 2 files in the GitHub repo:
+1) tools/prepare_assets.py
+2) js/main.js
+
+Then run: Actions > Build Runtime Assets for Vercel > Run workflow > main.
+Wait for success and Vercel redeploy.
+
+Verification in GitHub Actions log:
+Search for: [TERRAIN_FIX_V3]
+You should see START, BAKED OK (or FALLBACK), and DONE lines.

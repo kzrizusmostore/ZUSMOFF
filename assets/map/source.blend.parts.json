@@ -1,0 +1,47 @@
+{
+  "original": "source.blend",
+  "totalBytes": 198115500,
+  "sha256": "7d826a32952cd7d47db19361f8fa8eccb50a400a2c527093ee95f58aa331f9a2",
+  "parts": [
+    {
+      "file": "source.blend.part000",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part001",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part002",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part003",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part004",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part005",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part006",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part007",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part008",
+      "bytes": 20000000
+    },
+    {
+      "file": "source.blend.part009",
+      "bytes": 18115500
+    }
+  ]
+}
